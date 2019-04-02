@@ -348,69 +348,15 @@ sub throughBlocked{
   my $c = $pos->getC();
   my $r = $pos->getR();
 
-  if($pointTo == 0){
-    my $pos1 = new Position();
-    $pos1->setR($r + 1);
-    $pos1->setC($c);
-    my $pos2 = new Position();
-    $pos2->setR($r + 2);
-    $pos2->setC($c);
-    if($r + 1 < $maze->getHeight() & $maze->getCellContent($pos1) ne '*'){
-      if($r + 2 < $maze->getHeight() & $maze->getCellContent($pos2) eq '*'){
-        $tmp = $maze->getCellContent($pos1);
-        $self->move($pointTo, $maze);
-        $self->move($pointTo, $maze);
-        $maze->setCellContent($pos1, $tmp);
-      }
-    }
-  }
-  elsif($pointTo == 1){
-    my $pos1 = new Position();
-    $pos1->setR($r);
-    $pos1->setC($c + 1);
-    my $pos2 = new Position();
-    $pos2->setR($r);
-    $pos2->setC($c + 2);
-    if($c + 1 < $maze->getWidth() & $maze->getCellContent($pos1) ne '*'){
-      if($c + 2 < $maze->getHeight() & $maze->getCellContent($pos2) eq '*'){
-        $tmp = $maze->getCellContent($pos1);
-        $self->move($pointTo, $maze);
-        $self->move($pointTo, $maze);
-        $maze->setCellContent($pos1, $tmp);
-      }
-    }
-  }
-  elsif($pointTo == 2){
-    my $pos1 = new Position();
-    $pos1->setR($r - 1);
-    $pos1->setC($c);
-    my $pos2 = new Position();
-    $pos2->setR($r - 2);
-    $pos2->setC($c);
-    if($r - 1 > 0 & $maze->getCellContent($pos1) ne '*'){
-      if($r - 2 > 0 & $maze->getCellContent($pos2) eq '*'){
-        $tmp = $maze->getCellContent($pos1);
-        $self->move($pointTo, $maze);
-        $self->move($pointTo, $maze);
-        $maze->setCellContent($pos1, $tmp);
-      }
-    }
-  }
-  elsif($pointTo == 3){
-    my $pos1 = new Position();
-    $pos1->setR($r);
-    $pos1->setC($c - 1);
-    my $pos2 = new Position();
-    $pos2->setR($r);
-    $pos2->setC($c - 2);
-    if($c - 1 > 0 & $maze->getCellContent($pos1) ne '*'){
-      if($c - 2 > 0 & $maze->getCellContent($pos2) eq '*'){
-        $tmp = $maze->getCellContent($pos1);
-        $self->move($pointTo, $maze);
-        $self->move($pointTo, $maze);
-        $maze->setCellContent($pos1, $tmp);
-      }
-    }
+  if($c + (2 * $cshift[$pointTo]) < $maze->getWidth() & $r + (2 * $rshift[$pointTo]) < $maze->getHeight()){
+    my $tmp_p = new Position();
+    $tmp_p->setR($r + $rshift[$pointTo]);
+    $tmp_p->setC($c + $cshift[$pointTo]);
+    my $tmp_content = $maze->getCellContent($tmp_p);
+    $maze->setCellContent($tmp_p, '*');
+    $self->move($pointTo, $maze);
+    $self->move($pointTo, $maze);
+    $maze->setCellContent($tmp_p, $tmp_content);
   }
 }
 
