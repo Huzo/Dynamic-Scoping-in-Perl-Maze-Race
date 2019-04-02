@@ -81,7 +81,7 @@ class Maze:
         global map
         col = pos.getC()
         row = pos.getR()
-        return map[col][row].getContent()
+        return map[row][col].getContent()
 
     def setCellContent(self,pos,value):
         global map
@@ -110,19 +110,19 @@ class Maze:
 
     def displayMaze(self):
         global map
-        h = self.getHeight
-        w = self.getWidth
+        h = self.getHeight()
+        w = self.getWidth()
         print("Current Maze > \n\n",end='')
         indent = "\t\t\t"
         print(indent+"   |",end='')
         for j in range(w):
-            print(" " + j +  " |",end='')
+            print(" " + str(j) +  " |",end='')
         print("\n"+indent,end='')
         for j in range(w+1):
             print("----",end='')
         print("")
         for i in range(h):
-            print(indent+" "+i+" |",end='')
+            print(indent+" "+str(i)+" |",end='')
             for j in range(w):
                 cell = map[i][j]
                 ch = cell.content
@@ -140,41 +140,45 @@ class Maze:
             print("")
         print("\n--")
 
-    def loadMaze(self,fh):
+    def loadMaze(self,f):
         global map
-        f = open(fh)
-        s = f.read()
+        s = f.readline()
+        s = s.strip('\\n\n')
         l = s.split(' ')
-        h = l[0]
-        w = l[1]
+        h = int(l[0])
+        w = int(l[1])
+
+        map = [[Cell() for _ in range(w)] for _ in range(h)]
 
         end_h = 0
         end_w = 0
         coords = [0,0,0,0]
         for i in range(h):
-            row = f.read()
-            ch = row[i]
-            cell = Cell()
-            if(ch == 'O'):
-                end_h = i
-                end_w = j
-            else:
-                if(ch == '1'):
-                    coords[0] = i
-                    coords[1] = j
-                    ch = 'E'
+            row = f.readline()
+            row = row.strip('\\n\n')
+            for j in range(w):
+                ch = row[j]
+                cell = Cell()
+                if(ch == 'O'):
+                    end_h = i
+                    end_w = j
                 else:
-                    if(ch == "2"):
-                        coords[2] = i
-                        coords[3] = j
-                        ch = 'H'
+                    if(ch == '1'):
+                        coords[0] = i
+                        coords[1] = j
+                        ch = 'E'
+                    else:
+                        if(ch == "2"):
+                            coords[2] = i
+                            coords[3] = j
+                            ch = 'H'
 
-            cell.setContent(ch)
-            pos = Position()
-            pos.setR(i)
-            pos.setC(j)
-            cell.setPos(pos)
-            map[i][j] = cell
+                cell.setContent(ch)
+                pos = Position()
+                pos.setR(i)
+                pos.setC(j)
+                cell.setPos(pos)
+                map[i][j] = cell
 
         self.height = h
         self.width = w
@@ -185,9 +189,6 @@ class Maze:
         return coords
 
 class Player:
-    rshift = [1,0,-1,0]
-    cshift = [0,1,0,-1]
-
     def __init__(self):
         self.name = ""
         self.curPos = Position()
@@ -221,8 +222,8 @@ class Player:
             maze.explore(p)
 
     def next(self,pointTo):
-        global rshift
-        global cshift
+        rshift = [1,0,-1,0]
+        cshift = [0,1,0,-1]
         pos = Position()
         pos.setR(self.getPos().getR()+rshift[pointTo])
         pos.setC(self.getPos().getC()+cshift[pointTo])
@@ -241,8 +242,8 @@ class Player:
             maze.explore(pos)
 
     def throughBlocked(self,pointTo,maze):
-        global cshift
-        global rshift
+        rshift = [1,0,-1,0]
+        cshift = [0,1,0,-1]
         pos = self.getPos()
         c = pos.getC()
         c = pos.getR()
@@ -259,8 +260,8 @@ class Player:
 
     def teleport(self,maze):
         import random
-        row = random.randint(0,maze.getHeight())
-        col = random.randint(0,maze.getWidth())
+        row = random.randint(0,maze.getHeight() - 1)
+        col = random.randint(0,maze.getWidth() - 1)
         pos = Position()
         pos.setR(row)
         pos.setC(col)
@@ -286,9 +287,9 @@ class Player:
         else:
             scnt = self.specialMovesLeft
             if(scnt > 1):
-                print("You (Player "+p_name+") can make a normal move (unlimited) or a special move (only "+scnt+" times left).")
+                print("You (Player "+p_name+") can make a normal move (unlimited) or a special move (only "+str(scnt)+" times left).")
             else:
-                print("You (Player "+p_name+") can make a normal move or a special move (only "+scnt+" time left).")
+                print("You (Player "+p_name+") can make a normal move or a special move (only "+str(scnt)+" time left).")
             print("Your (Player "+p_name+") moving type (0: rush, 1: through-blocked, 2: teleport, default: normal move) > ",end='')
             op = input()
 
