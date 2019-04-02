@@ -1,7 +1,7 @@
 class Position:
     def __init__(self):
-            self.r = 0
-            self.c = 0
+        self.r = 0
+        self.c = 0
 
     def getC(self):
         return self.c
@@ -212,13 +212,17 @@ class Player:
         maze.explore(self.getPos())
 
     def move(self,pointTo,maze):
+        rshift = [1,0,-1,0]
+        cshift = [0,1,0,-1]
         p = self.next(pointTo)
         if(maze.isAvailable(p) == 1):
             self.leave(maze)
             cur_h = self.curPos.getR()
             cur_w = self.curPos.getC()
+            self.curPos.setR(cur_h+rshift[pointTo]);
+            self.curPos.setC(cur_w+cshift[pointTo]);
             self.occupy(maze)
-        elif(p.getR() < maze.getHeight() and p.getC() < maze.getWidth()):
+        elif(p.getR() < maze.getHeight() and p.getC() < maze.getWidth() and p.getR() >= 0 and p.getC() >= 0):
             maze.explore(p)
 
     def next(self,pointTo):
@@ -232,31 +236,40 @@ class Player:
     def rush(self,pointTo,maze):
         self.move(pointTo, maze)
         pos = self.next(pointTo)
-        while(pos.getR() < maze.getHeight() and pos.getC() < maze.getWidth()):
+        while(pos.getR() < maze.getHeight() and pos.getC() < maze.getWidth() and pos.getR() >= 0 and pos.getC() >= 0):
             if(maze.isAvailable(pos) == 1):
                 self.move(pointTo,maze)
                 pos = self.next(pointTo)
             else:
                 break
-        if(pos.getR() < maze.getHeight() and pos.getC() < maze.getWidth()):
+        if(pos.getR() < maze.getHeight() and pos.getC() < maze.getWidth() and pos.getR() >= 0 and pos.getC() >= 0):
             maze.explore(pos)
 
     def throughBlocked(self,pointTo,maze):
         rshift = [1,0,-1,0]
         cshift = [0,1,0,-1]
         pos = self.getPos()
+        target_pos = Position()
         c = pos.getC()
-        c = pos.getR()
+        r = pos.getR()
+        target_c = c + (2 * cshift[pointTo])
+        target_r = r + (2 * rshift[pointTo])
+        target_pos.setR(target_r)
+        target_pos.setC(target_c)
+        tmp_p = Position()
+        tmp_p.setR(r + rshift[pointTo])
+        tmp_p.setC(c + cshift[pointTo])
 
-        if(c + (2 * cshift[pointTo]) < maze.getWidth() and r + (2 * rshift[pointTo]) < maze.getHeight()):
-            tmp_p = Position()
-            tmp_p.setR(r + rshift[pointTo])
-            tmp_p.setC(c + cshift[pointTo])
-            tmp_content = maze.getCellContent(tmp_p)
-            maze.setCellContent(tmp_p, '*')
-            self.move(pointTo, maze)
-            self.move(pointTo, maze)
-            maze.setCellContent(tmp_p, tmp_content)
+        if(target_c < maze.getWidth() and target_r < maze.getHeight() and target_c >= 0 and target_r >= 0):
+            if(maze.getCellContent(target_pos) == '*'):
+                tmp_content = maze.getCellContent(tmp_p)
+                maze.setCellContent(tmp_p, '*')
+                self.move(pointTo, maze)
+                self.move(pointTo, maze)
+                maze.setCellContent(tmp_p, tmp_content)
+            else:
+                maze.explore(tmp_p)
+                maze.explore(target_pos)
 
     def teleport(self,maze):
         import random
