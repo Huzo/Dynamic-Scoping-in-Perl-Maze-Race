@@ -19,7 +19,7 @@ sub new{
     $p1->getPos()->setC(int($coords[1]));
     $p2->getPos()->setR(int($coords[2]));
     $p2->getPos()->setC(int($coords[3]));
-
+    
     $maze->explore($p1->getPos());
     $maze->explore($p2->getPos());
   }
