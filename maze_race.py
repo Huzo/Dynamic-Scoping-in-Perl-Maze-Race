@@ -103,7 +103,7 @@ class Maze:
             return 0
 
     def reachDest(self,pos):
-        if(pos.getC() == self.destPos.getC and pos.getR() == self.destPos.getR()):
+        if(pos.getC() == self.destPos.getC() and pos.getR() == self.destPos.getR()):
             return 1
         else:
             return 0
@@ -366,7 +366,7 @@ class MazeRace:
             maze.displayMaze()
             if(maze.reachDest(pArr[turn].getPos())):
                 i = turn + 1
-                print("\n--\nPlayer"+i+" wins! ")
+                print("\n--\nPlayer"+str(i)+" wins! ")
                 finished = 1
             turn = (turn + 1) % 2
 
