@@ -237,12 +237,14 @@ class Player:
         self.move(pointTo, maze)
         pos = self.next(pointTo)
         while(pos.getR() < maze.getHeight() and pos.getC() < maze.getWidth() and pos.getR() >= 0 and pos.getC() >= 0):
+            if(maze.reachDest(self.getPos()) == 1):
+                break
             if(maze.isAvailable(pos) == 1):
                 self.move(pointTo,maze)
                 pos = self.next(pointTo)
             else:
                 break
-        if(pos.getR() < maze.getHeight() and pos.getC() < maze.getWidth() and pos.getR() >= 0 and pos.getC() >= 0):
+        if(pos.getR() < maze.getHeight() and pos.getC() < maze.getWidth() and pos.getR() >= 0 and pos.getC() >= 0 and maze.reachDest(self.getPos()) == 0):
             maze.explore(pos)
 
     def throughBlocked(self,pointTo,maze):
@@ -261,12 +263,15 @@ class Player:
         tmp_p.setC(c + cshift[pointTo])
 
         if(target_c < maze.getWidth() and target_r < maze.getHeight() and target_c >= 0 and target_r >= 0):
-            if(maze.getCellContent(target_pos) == '*'):
-                tmp_content = maze.getCellContent(tmp_p)
-                maze.setCellContent(tmp_p, '*')
-                self.move(pointTo, maze)
-                self.move(pointTo, maze)
-                maze.setCellContent(tmp_p, tmp_content)
+            if((maze.getCellContent(target_pos) == '*' or maze.getCellContent(target_pos) == 'O') and maze.getCellContent(tmp_p) != '*'):
+                if(maze.getCellContent(tmp_p) == 'O'):
+                    self.move(pointTo, maze)
+                else:
+                    tmp_content = maze.getCellContent(tmp_p)
+                    maze.setCellContent(tmp_p, '*')
+                    self.move(pointTo, maze)
+                    self.move(pointTo, maze)
+                    maze.setCellContent(tmp_p, tmp_content)
             else:
                 self.move(pointTo, maze)
 

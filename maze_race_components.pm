@@ -260,8 +260,8 @@ sub loadMaze{
 
 package Player;
 
-our @rshift = (1, 0, -1, 0);
-our @cshift = (0, 1, 0, -1);
+our @rshift = (1, 0, -1, 0, 0);
+our @cshift = (0, 1, 0, -1, 0);
 
 sub new{
     my $class = shift;
@@ -302,18 +302,40 @@ sub leave{
 
 sub move{
   my ($self, $pointTo, $maze) = @_;
-  my $p = $self->next($pointTo);
-  if($maze->isAvailable($p) == 1){
-    $self->leave($maze);
-    my $cur_h = $self->{curPos}->getR();
-    my $cur_w = $self->{curPos}->getC();
-    $self->{curPos}->setR($cur_h+$rshift[$pointTo]);
-    $self->{curPos}->setC($cur_w+$cshift[$pointTo]);
-    $self->occupy($maze);
+  if($pointTo < 4){
+    my $p = $self->next($pointTo);
+    if($p->getR() < $maze->getHeight() & $p->getC() < $maze->getWidth() & $p->getR() >= 0 & $p->getC() >= 0){
+      if($maze->isAvailable($p) == 1){
+        $self->leave($maze);
+        my $cur_h = $self->{curPos}->getR();
+        my $cur_w = $self->{curPos}->getC();
+        $self->{curPos}->setR($cur_h+$rshift[$pointTo]);
+        $self->{curPos}->setC($cur_w+$cshift[$pointTo]);
+        $self->occupy($maze);
+      }
+      elsif($p->getR() < $maze->getHeight() & $p->getC() < $maze->getWidth() & $p->getR() >= 0 & $p->getC() >= 0){
+        $maze->explore($p);
+      }
+    }
   }
-  elsif($p->getR() < $maze->getHeight() & $p->getC() < $maze->getWidth() & $p->getR() >= 0 & $p->getC() >= 0){
-    $maze->explore($p);
-  }
+  else{
+    my $target_pos = new Position();
+    my $cur_r = $self->{curPos}->getR();
+    my $cur_c = $self->{curPos}->getC();
+    my $target_c = $cur_c+$cshift[$pointTo];
+    my $target_r = $cur_r+$rshift[$pointTo];
+    $target_pos->setR($target_r);
+    $target_pos->setC($target_c);
+    if($maze->isAvailable($target_pos) == 1){
+      $self->leave($maze);
+      $self->{curPos}->setR($cur_r+$rshift[$pointTo]);
+      $self->{curPos}->setC($cur_c+$cshift[$pointTo]);
+      $self->occupy($maze);
+    }
+    else{
+      $maze->explore($target_pos);
+    }
+  } 
 }
 
 sub next{
@@ -327,17 +349,23 @@ sub next{
 sub rush{
   my ( $self, $pointTo, $maze ) = @_;
   $self->move($pointTo, $maze);
+  local $pos = new Position();
   $pos = $self->next($pointTo);
   while($pos->getR() < $maze->getHeight() & $pos->getC() < $maze->getWidth() & $pos->getR() >= 0 & $pos->getC() >= 0){
+    if($maze->reachDest($self->getPos()) == 1){
+      last;
+    }
     if($maze->isAvailable($pos) == 1){
       $self->move($pointTo, $maze);
       $pos = $self->next($pointTo);
     }
     else{
+      local @rshift = (0, 1, 0, -1, $pos->getR());
+      local @cshift = (0, 1, 0, -1, $pos->getC());
       last;
     }
   }
-  if($pos->getR() < $maze->getHeight() & $pos->getC() < $maze->getWidth() & $pos->getR() >= 0 & $pos->getC() >= 0){
+  if($pos->getR() < $maze->getHeight() & $pos->getC() < $maze->getWidth() & $pos->getR() >= 0 & $pos->getC() >= 0 & $maze->reachDest($self->getPos()) == 0){
     $maze->explore($pos);
   }
 }
@@ -357,35 +385,42 @@ sub throughBlocked{
   $tmp_p->setC($c + $cshift[$pointTo]);
 
   if($target_c < $maze->getWidth() & $target_r < $maze->getHeight() & $target_c >= 0 & $target_r >= 0){
-    if($maze->getCellContent($target_pos) eq '*'){
-      my $tmp_content = $maze->getCellContent($tmp_p);
-      $maze->setCellContent($tmp_p, '*');
+    if(($maze->getCellContent($target_pos) eq '*' || $maze->getCellContent($target_pos) eq 'O') & $maze->getCellContent($tmp_p) ne '*'){
+      if($maze->getCellContent($tmp_p) eq 'O'){
+        $self->move($pointTo, $maze);
+      }
+      else{
+        my $r_dif = $target_r - $r;
+        my $c_dif = $target_c - $c;
+        local @rshift = (0, 0, 0, 0, $r_dif);
+        local @cshift = (0, 0, 0, 0, $c_dif);
+        $maze->explore($tmp_p);
+        $self->move(4, $maze);
+      }
+    }
+    elsif($maze->getCellContent($tmp_p) eq '*'){
       $self->move($pointTo, $maze);
-      $self->move($pointTo, $maze);
-      $maze->setCellContent($tmp_p, $tmp_content);
     }
     else{
-      $self->move($pointTo, $maze);
+      $maze->explore($tmp_p);
+      $maze->explore($target_pos);
     }
   }
 }
 
 sub teleport{
     my ($self, $maze) = @_;
-    my $row = int(rand $maze->getHeight());
-    my $col = int(rand $maze->getWidth());
-    my $pos = new Position();
-    $pos->setR($row);
-    $pos->setC($col);
-    if($maze->getCellContent($pos) eq '*'){
-      $self->leave($maze);
-      $self->{curPos}->setR($row);
-      $self->{curPos}->setC($col);
-      $self->occupy($maze);
-    }
-    else{
-      $maze->explore($pos);
-    }
+    my $row_rand = int(rand $maze->getHeight());
+    my $col_rand = int(rand $maze->getWidth());
+    my $row_cur = $self->getPos()->getR();
+    my $col_cur = $self->getPos()->getC();
+
+    my $row_dif = $row_rand - $row_cur;
+    my $col_dif = $col_rand - $col_cur;
+
+    local @rshift = (0, 0, 0, 0, $row_dif);
+    local @cshift = (0, 0, 0, 0, $col_dif);
+    $self->move(4, $maze);
 }
 
 sub makeMove{
