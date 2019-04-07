@@ -1,3 +1,21 @@
+# 
+# CSCI3180 Principles of Programming Languages 
+# 
+# --- Declaration --- 
+# 
+# I declare that the assignment here submitted is original except for source 
+# material explicitly acknowledged. I also acknowledge that I am aware of 
+# University policy and regulations on honesty in academic work, and of the 
+# disciplinary guidelines and procedures applicable to breaches of such policy 
+# and regulations, as contained in the website 
+# http://www.cuhk.edu.hk/policy/academichonesty/ 
+# 
+# Assignment 3 
+# Name : Huzeyfe KIRAN
+# Student ID : 1155104019
+# Email Addr : 1155104019@link.cuhk.edu.hk
+#
+
 class Position:
     def __init__(self):
         self.r = 0
@@ -215,15 +233,16 @@ class Player:
         rshift = [1,0,-1,0]
         cshift = [0,1,0,-1]
         p = self.next(pointTo)
-        if(maze.isAvailable(p) == 1):
-            self.leave(maze)
-            cur_h = self.curPos.getR()
-            cur_w = self.curPos.getC()
-            self.curPos.setR(cur_h+rshift[pointTo]);
-            self.curPos.setC(cur_w+cshift[pointTo]);
-            self.occupy(maze)
-        elif(p.getR() < maze.getHeight() and p.getC() < maze.getWidth() and p.getR() >= 0 and p.getC() >= 0):
-            maze.explore(p)
+        if(p.getR() < maze.getHeight() and p.getC() < maze.getWidth() and p.getR() >= 0 and p.getC() >= 0):
+            if(maze.isAvailable(p) == 1):
+                self.leave(maze)
+                cur_h = self.curPos.getR()
+                cur_w = self.curPos.getC()
+                self.curPos.setR(cur_h+rshift[pointTo]);
+                self.curPos.setC(cur_w+cshift[pointTo]);
+                self.occupy(maze)
+            elif(p.getR() < maze.getHeight() and p.getC() < maze.getWidth() and p.getR() >= 0 and p.getC() >= 0):
+                maze.explore(p)
 
     def next(self,pointTo):
         rshift = [1,0,-1,0]
