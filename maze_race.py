@@ -268,8 +268,7 @@ class Player:
                 self.move(pointTo, maze)
                 maze.setCellContent(tmp_p, tmp_content)
             else:
-                maze.explore(tmp_p)
-                maze.explore(target_pos)
+                self.move(pointTo, maze)
 
     def teleport(self,maze):
         import random
