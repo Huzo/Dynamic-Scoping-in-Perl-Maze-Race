@@ -301,7 +301,7 @@ class Player:
         pos = Position()
         pos.setR(row)
         pos.setC(col)
-        if(maze.getCellContent(pos) == '*'):
+        if(maze.getCellContent(pos) == '*' or maze.getCellContent(pos) == 'O'):
             self.leave(maze)
             self.curPos.setR(row)
             self.curPos.setC(col)
