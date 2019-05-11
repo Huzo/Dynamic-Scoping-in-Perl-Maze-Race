@@ -3,7 +3,6 @@
 
 ```
 Assignment 3 — Perl and Dynamic Scoping
-Deadline: Apr 7, 2019 (Sunday) 23:
 ```
 # 1 Introduction
 
@@ -76,6 +75,7 @@ be revealed to all players.
 first. The player whoreachesthe treasure first will win this game. Note thatreachingthe treasure
 means the playerhas just moved intothe cell containing the treasure.
 
+![](https://github.com/Huzo/Dynamic-Scoping-in-Perl-Maze-Race/blob/master/figure1.png)
 Figure 1: The neighborhood of Player 1 usingmove. The green cell is feasible while red cells are
 blocked. Best viewed on screen.
 
@@ -92,7 +92,7 @@ more special moves:rush,walk through a blocked cell, andteleport.
     an edge of the maze, or a cell that is occupied by a wall or player. Check out Figure 2 for
     illustrations. All cells along the path of a rush will be revealed.
 
-
+![](https://github.com/Huzo/Dynamic-Scoping-in-Perl-Maze-Race/blob/master/figure2.png)
 Figure 2: The neighborhood of Player 1 usingrush. The green cells are feasible while red cell is
 blocked. Best viewed on screen.
 
@@ -101,6 +101,7 @@ blocked. Best viewed on screen.
     more than one level of blocked cell though. On the other hand, if there is no wall/player in
     front of the player, thenwalk through a blocked celldegenerates to a normalmove.
 
+![](https://github.com/Huzo/Dynamic-Scoping-in-Perl-Maze-Race/blob/master/figure3.png)
 Figure 3: The neighborhood of Player 1 usingwalk through a blocked cell. The green cells are
 feasible while red cell is blocked. Best viewed on screen.
 
@@ -255,6 +256,8 @@ reachDest(pos)
 - Return whether we can find the treasures in the given position (pos) as a 0/
 value (0: not found, 1: found).
 
+![](https://github.com/Huzo/Dynamic-Scoping-in-Perl-Maze-Race/blob/master/figure4.png)
+
 ```
 Figure 4: A visual example about the maze information.
 ```
@@ -339,6 +342,8 @@ We provide you with the skeleton code in “mazerace.pl” and “mazeracecompon
 are not allowed to change our code, but can only insert your own code. Your implementation
 should be able to run with the main program in “mazerace.pl”.
 
+![](https://github.com/Huzo/Dynamic-Scoping-in-Perl-Maze-Race/blob/master/figure5.png)
+
 ```
 Figure 5: The input of Player 1.
 ```
@@ -353,6 +358,8 @@ file. The data format is given below.
 H W
 #1###2#
 ```
+
+![](https://github.com/Huzo/Dynamic-Scoping-in-Perl-Maze-Race/blob/master/figure6.png)
 
 ```
 Figure 6: Check the input for Player 2 and request the input again if that is invalid.
@@ -389,6 +396,7 @@ Moreover, any invalid input should be forbidden and the user is requested for in
 a valid move is given. See Figure 6. Note we will also display the number of remaining special
 moves that a player can make in each turn. When a player runs out of all his special moves,
 
+![](https://github.com/Huzo/Dynamic-Scoping-in-Perl-Maze-Race/blob/master/figure7.png)
 
 Figure 7: Player 2 used up all his/her special moves, and he/she is defaulted to make a normal
 move from now on.
